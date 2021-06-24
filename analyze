@@ -1,0 +1,10 @@
+parameters:
+    number of agents
+    reaction_strength distribution
+    order_period distribution
+
+results qualities:
+    non-normality of returns
+    kurtosis of returns
+    lack of autocorrelation of returns
+    Taylor effect
