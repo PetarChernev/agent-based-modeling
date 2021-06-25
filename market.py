@@ -21,22 +21,24 @@ class Market:
         number_of_sells = [0]
         spread = [0]
         for i in range(max_t):
+            if not i % (max_t//100):
+                print(f"t={i}/{max_t}")
             p_t = None
             for a in agents:
                 new_order = a.update(s[-a.price_history_len:], info_series[i], fundamental_series[i])
                 if new_order is not None:
-                    strike_price = order_book.process_order(*new_order)
+                    strike_price = order_book.process_order(new_order)
                     if strike_price is not None:
                         p_t = strike_price
 
             if order_book.sell_orders:
-                sell_price = order_book.sell_orders[0]
+                sell_price = order_book.sell_orders[0].price
                 s.append(sell_price)
             else:
                 s.append(s[-1])
 
             if order_book.buy_orders:
-                buy_price = - order_book.buy_orders[0]
+                buy_price = order_book.buy_orders[0].price
                 b.append(buy_price)
             else:
                 b.append(b[-1])
