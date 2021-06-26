@@ -14,7 +14,7 @@ class OrderBook:
                 sell_order = heappop(self.sell_orders)
                 # sell_order.fulfill()
                 # order.fulfill()
-                return order.price
+                return sell_order.price
             else:
                 heappush(self.buy_orders, order)
         elif order.type == -1:
@@ -22,6 +22,6 @@ class OrderBook:
                 buy_order = heappop(self.buy_orders)
                 # buy_order.fulfill()
                 # order.fulfill()
-                return order.price
+                return buy_order.price
             else:
                 heappush(self.sell_orders, order)

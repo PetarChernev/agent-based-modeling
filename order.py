@@ -23,5 +23,6 @@ class Order:
         return str((self.type, self.price))
 
     def fulfill(self):
+        # currently not used. The agents don't keep track of shares and capital
         self.agent.shares += self.type
         self.agent.capital += -self.type * self.price

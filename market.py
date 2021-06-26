@@ -20,16 +20,24 @@ class Market:
         number_of_buys = [0]
         number_of_sells = [0]
         spread = [0]
+        fulfilled_buys_series = [0]
+        fulfilled_sells_series = [0]
         for i in range(max_t):
+            fulfilled_buys = 0
+            fulfilled_sells = 0
             if not i % (max_t//100):
                 print(f"t={i}/{max_t}")
             p_t = None
             for a in agents:
-                new_order = a.update(s[-a.price_history_len:], info_series[i], fundamental_series[i])
+                new_order = a.update(p[-a.price_history_len:], info_series[i], fundamental_series[i])
                 if new_order is not None:
                     strike_price = order_book.process_order(new_order)
                     if strike_price is not None:
                         p_t = strike_price
+                        if new_order.type == 1:
+                            fulfilled_buys += 1
+                        else:
+                            fulfilled_sells += 1
 
             if order_book.sell_orders:
                 sell_price = order_book.sell_orders[0].price
@@ -55,10 +63,15 @@ class Market:
 
             number_of_buys.append(len(order_book.buy_orders))
             number_of_sells.append(len(order_book.sell_orders))
+            fulfilled_buys_series.append(fulfilled_buys)
+            fulfilled_sells_series.append(fulfilled_sells)
 
         return MarketData(np.array(p),
                           np.array(b),
                           np.array(s),
                           np.array(number_of_buys),
+                          np.array(fulfilled_buys_series),
                           np.array(number_of_sells),
-                          np.array(spread))
+                          np.array(fulfilled_sells_series),
+                          np.array(spread)
+                          )

@@ -46,5 +46,5 @@ class NoiseAgent(Agent):
                          order_type=order_type,
                          price=price_history[-1] + self.reaction_strength * personal_info)
         else:
-            self.threshold -= 2 * self.info_var_squared / self.order_period
+            self.threshold -= 2 * self.info_var_squared * self.order_period
             return None
