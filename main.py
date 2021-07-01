@@ -6,18 +6,18 @@ from agent import NoiseAgent
 from market import Market
 
 
-max_t = 5000
+max_t = 500000
 n_agents = 100
 info_var_squared = 1
 fundamental_change_var_squared = 1
 s_0 = 1000
 sentiment_dist = stats.norm(0, 1)
-reaction_strength_dist = stats.norm(2, 3)
+reaction_strength_dist = stats.norm(0, 3)
 
 agents = [
     NoiseAgent(
-        shares=100000,  # not used
-        capital=10000000,  # not used
+        shares=1000,  # not used
+        capital=1000000,  # not used
         sentiment=sentiment_dist.rvs(),
         reaction_strength=reaction_strength_dist.rvs(),
         order_period=0.8,

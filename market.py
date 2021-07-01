@@ -23,22 +23,25 @@ class Market:
         spread = [0]
         fulfilled_buys_series = [0]
         fulfilled_sells_series = [0]
+
+        agent_counter = 0
         for i in range(max_t):
             fulfilled_buys = 0
             fulfilled_sells = 0
             if not i % (max_t//100):
                 print(f"t={i}/{max_t}")
             p_t = None
-            for a in agents:
-                new_order = a.update(p[-a.price_history_len:], info_series[i], fundamental_series[i])
-                if new_order is not None:
-                    strike_price = self.order_book.process_order(new_order)
-                    if strike_price is not None:
-                        p_t = strike_price
-                        if new_order.type == 1:
-                            fulfilled_buys += 1
-                        else:
-                            fulfilled_sells += 1
+            a = agents[agent_counter]
+            agent_counter = (agent_counter + 1) % len(agents)
+            new_order = a.update(p[-a.price_history_len:], info_series[i], fundamental_series[i])
+            if new_order is not None:
+                strike_price = self.order_book.process_order(new_order)
+                if strike_price is not None:
+                    p_t = strike_price
+                    if new_order.type == 1:
+                        fulfilled_buys += 1
+                    else:
+                        fulfilled_sells += 1
 
             if self.order_book.sell_orders:
                 sell_price = self.order_book.sell_orders[0].price
@@ -54,8 +57,8 @@ class Market:
 
             if p_t is not None:
                 p.append(p_t)
-            else:
-                p.append(p[-1])
+            # else:
+            #     p.append(p[-1])
 
             if self.order_book.sell_orders and self.order_book.buy_orders:
                 spread.append(sell_price - buy_price)
