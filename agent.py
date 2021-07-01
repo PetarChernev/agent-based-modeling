@@ -40,11 +40,9 @@ class NoiseAgent(Agent):
             # wants to place a new order
             self.threshold = 2 * self.info_var_squared
             order_type = np.sign(personal_info)
-            # can't place sell order with no held shares and buy order with negative capital:
-            #if (order_type == -1 and self.shares) or (order_type == 1 and self.capital > 0):
             return Order(agent=self,
                          order_type=order_type,
-                         price=price_history[-1] + self.reaction_strength * personal_info)
+                         price=max(0, price_history[-1] + order_type * self.reaction_strength))
         else:
             self.threshold -= 2 * self.info_var_squared * self.order_period
             return None
