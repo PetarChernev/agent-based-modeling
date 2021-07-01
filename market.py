@@ -8,11 +8,12 @@ class Market:
     def __init__(self, info_var_squared, fundamental_change_var_squared):
         self.info_var_sq = info_var_squared
         self.fundamental_change_var_sq = fundamental_change_var_squared
+        self.order_book = OrderBook()
 
     def simulate(self, agents, max_t, initial_price):
         info_series = np.random.normal(0, self.info_var_sq, max_t)
         fundamental_series = np.cumsum(np.random.normal(0, self.fundamental_change_var_sq, max_t))
-        order_book = OrderBook()
+        self.order_book.clear()
 
         s = [initial_price]
         b = [initial_price]
@@ -31,7 +32,7 @@ class Market:
             for a in agents:
                 new_order = a.update(p[-a.price_history_len:], info_series[i], fundamental_series[i])
                 if new_order is not None:
-                    strike_price = order_book.process_order(new_order)
+                    strike_price = self.order_book.process_order(new_order)
                     if strike_price is not None:
                         p_t = strike_price
                         if new_order.type == 1:
@@ -39,14 +40,14 @@ class Market:
                         else:
                             fulfilled_sells += 1
 
-            if order_book.sell_orders:
-                sell_price = order_book.sell_orders[0].price
+            if self.order_book.sell_orders:
+                sell_price = self.order_book.sell_orders[0].price
                 s.append(sell_price)
             else:
                 s.append(s[-1])
 
-            if order_book.buy_orders:
-                buy_price = order_book.buy_orders[0].price
+            if self.order_book.buy_orders:
+                buy_price = self.order_book.buy_orders[0].price
                 b.append(buy_price)
             else:
                 b.append(b[-1])
@@ -56,13 +57,13 @@ class Market:
             else:
                 p.append(p[-1])
 
-            if order_book.sell_orders and order_book.buy_orders:
+            if self.order_book.sell_orders and self.order_book.buy_orders:
                 spread.append(sell_price - buy_price)
             else:
                 spread.append(np.nan)
 
-            number_of_buys.append(len(order_book.buy_orders))
-            number_of_sells.append(len(order_book.sell_orders))
+            number_of_buys.append(len(self.order_book.buy_orders))
+            number_of_sells.append(len(self.order_book.sell_orders))
             fulfilled_buys_series.append(fulfilled_buys)
             fulfilled_sells_series.append(fulfilled_sells)
 
